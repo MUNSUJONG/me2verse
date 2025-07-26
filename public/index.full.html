@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>Me2Verse 감성 결제 - 통합형</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="https://sdk.minepi.com/pi-sdk.js"></script>
+  <style>
+    body {
+      font-family: 'Noto Sans KR', sans-serif;
+      background: linear-gradient(to bottom, #f8f3ff, #e7eafc);
+      color: #4a148c;
+      text-align: center;
+      padding-top: 80px;
+    }
+    h1 {
+      font-size: 2.2rem;
+      margin-bottom: 16px;
+    }
+    p {
+      font-size: 1.2rem;
+      margin-bottom: 40px;
+    }
+    button {
+      font-size: 1rem;
+      font-weight: bold;
+      padding: 14px 30px;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      margin: 10px;
+    }
+    .login-btn {
+      background-color: #7e57c2;
+      color: white;
+    }
+    .pay-btn {
+      background-color: #4caf50;
+      color: white;
+    }
+    #status {
+      margin-top: 30px;
+      font-size: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <h1>Me2Verse 감성 결제 페이지</h1>
+  <p>당신의 감성과 블록체인을 연결하는 아름다운 세계</p>
+  <button class="login-btn" onclick="handleLogin()">로그인</button>
+  <button class="pay-btn" onclick="handlePayment()">결제하기</button>
+  <div id="status"></div>
+
+  <script>
+    async function handleLogin() {
+      if (!window.Pi) {
+        document.getElementById("status").innerText = "Pi 브라우저에서 실행해주세요!";
+        return;
+      }
+
+      const scopes = ['username', 'payments'];
+      Pi.authenticate(scopes, onIncompletePaymentFound)
+        .then(function(auth) {
+          document.getElementById("status").innerText = "로그인 성공: " + auth.user.username;
+        })
+        .catch(function(error) {
+          document.getElementById("status").innerText = "로그인 실패: " + error;
+        });
+    }
+
+    async function handlePayment() {
+      document.getElementById("status").innerText = "결제 기능 준비 중입니다...";
+    }
+
+    function onIncompletePaymentFound(payment) {
+      console.log("미완료 결제 발견:", payment);
+    }
+  </script>
+</body>
+</html>
