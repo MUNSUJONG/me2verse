@@ -1,0 +1,28 @@
+body {
+  background: linear-gradient(to bottom right, #f8f3ff, #e7eafc);
+  font-family: 'Noto Sans KR', sans-serif;
+  color: #4a148c;
+  text-align: center;
+  padding: 50px;
+}
+button {
+  border: none;
+  border-radius: 12px;
+  font-weight: bold;
+  padding: 10px 20px;
+  margin: 10px;
+  cursor: pointer;
+  font-size: 16px;
+}
+button.login {
+  background-color: #7e57c2;
+  color: white;
+}
+button.pay {
+  background-color: #4caf50;
+  color: white;
+}
+#statusMsg {
+  margin-top: 20px;
+  font-size: 18px;
+}
