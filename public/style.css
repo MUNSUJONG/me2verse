@@ -1,1 +1,34 @@
-body { font-family: 'Noto Sans KR', sans-serif; background: #f8f3ff; color: #4a148c; }
+body {
+  font-family: 'Noto Sans KR', sans-serif;
+  background: linear-gradient(to bottom right, #f8f3ff, #e7eafc);
+  color: #4a148c;
+  text-align: center;
+  padding: 2rem;
+}
+.container {
+  background: white;
+  border-radius: 1.5rem;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  padding: 2rem;
+  display: inline-block;
+}
+button {
+  margin: 1rem;
+  padding: 1rem 2rem;
+  border: none;
+  border-radius: 1rem;
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: white;
+  cursor: pointer;
+}
+#loginBtn {
+  background-color: #7e57c2;
+}
+#payBtn {
+  background-color: #4caf50;
+}
+#statusMsg {
+  margin-top: 1rem;
+  font-weight: bold;
+}
