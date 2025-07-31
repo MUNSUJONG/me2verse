@@ -1,25 +1,27 @@
+// backend/index.js
+
 const express = require('express');
 const app = express();
+
 const PORT = process.env.PORT || 3000;
 
+// 기본 루트 테스트용
+app.get('/', (req, res) => {
+  res.send('🟢 Me2Verse 백엔드 루트 정상 작동 중!');
+});
+
+// 추가 라우터 예시
+app.get('/ping', (req, res) => {
+  res.send('✅ Ping OK: 서버 응답 정상');
+});
+
+// JSON 요청 처리를 위한 미들웨어
 app.use(express.json());
 
-app.get('/ping', (req, res) => {
-  res.send('🟢 Render 서버 정상 작동 중');
-});
-
-app.post('/approve', (req, res) => {
-  const { paymentId } = req.body;
-  if (!paymentId) return res.status(400).json({ error: 'Missing paymentId' });
-  console.log('✅ 승인 완료:', paymentId);
-  res.json({ status: 'approved' });
-});
-
-app.post('/complete', (req, res) => {
-  const { paymentId, txid } = req.body;
-  if (!paymentId || !txid) return res.status(400).json({ error: 'Missing paymentId or txid' });
-  console.log('🎉 결제 완료 처리됨:', { paymentId, txid });
-  res.json({ status: 'completed' });
+// POST 테스트용
+app.post('/test', (req, res) => {
+  const { message } = req.body;
+  res.json({ reply: `받은 메시지: ${message}` });
 });
 
 app.listen(PORT, () => {
