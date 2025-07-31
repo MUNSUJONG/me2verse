@@ -12,12 +12,10 @@ loginBtn.addEventListener('click', async () => {
     }
 
     const scopes = ['username', 'payments'];
-    Pi.init({ version: "2.0" });
-
-    currentUser = await Pi.authenticate(scopes, onIncompletePaymentFound);
+    Pi.init({ version: '2.0', sandbox: true });
+    currentUser = await Pi.authenticate(scopes);
     statusMsg.textContent = `✅ 로그인 성공: ${currentUser.username}`;
   } catch (error) {
-    console.error(error);
     statusMsg.textContent = '❌ 로그인 실패: ' + error.message;
   }
 });
@@ -40,14 +38,14 @@ payBtn.addEventListener('click', async () => {
     await Pi.createPayment(paymentData, {
       onReadyForServerApproval: async (paymentId) => {
         statusMsg.textContent = '🔄 서버 승인 중...';
-        await fetch("https://me2verse-backend.onrender.com/approve", {
+        await fetch("https://your-render-server-url/approve", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ paymentId })
         });
       },
       onReadyForServerCompletion: async (paymentId, txid) => {
-        await fetch("https://me2verse-backend.onrender.com/complete", {
+        await fetch("https://your-render-server-url/complete", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ paymentId, txid })
@@ -57,7 +55,7 @@ payBtn.addEventListener('click', async () => {
       onCancel: (paymentId) => {
         statusMsg.textContent = '❌ 결제가 취소되었습니다.';
       },
-      onError: (error) => {
+      onError: (error, payment) => {
         statusMsg.textContent = '❌ 결제 중 오류 발생: ' + error.message;
       }
     });

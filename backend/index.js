@@ -1,12 +1,8 @@
 const express = require('express');
-const cors = require('cors');
-const bodyParser = require('body-parser');
-
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.use(cors());
-app.use(bodyParser.json());
+app.use(express.json());
 
 app.get('/ping', (req, res) => {
   res.send('🟢 Render 서버 정상 작동 중');
@@ -14,13 +10,15 @@ app.get('/ping', (req, res) => {
 
 app.post('/approve', (req, res) => {
   const { paymentId } = req.body;
-  console.log(`✅ 결제 승인 처리: ${paymentId}`);
+  if (!paymentId) return res.status(400).json({ error: 'Missing paymentId' });
+  console.log('✅ 승인 완료:', paymentId);
   res.json({ status: 'approved' });
 });
 
 app.post('/complete', (req, res) => {
   const { paymentId, txid } = req.body;
-  console.log(`🎉 결제 완료 처리: ${paymentId}, TXID: ${txid}`);
+  if (!paymentId || !txid) return res.status(400).json({ error: 'Missing paymentId or txid' });
+  console.log('🎉 결제 완료 처리됨:', { paymentId, txid });
   res.json({ status: 'completed' });
 });
 
