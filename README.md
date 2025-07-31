@@ -1,2 +1,2 @@
-# me2verse
-Me2Verse Pi Network Demo App — Pi 로그인, 결제, 인증키, 약관 등 Web3 기능 통합 프로젝트
+# Me2Verse 프로젝트
+Pi Network 연동 테스트용 프로젝트입니다.
