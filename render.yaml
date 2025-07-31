@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: me2verse-backend
+    env: node
+    plan: free
+    region: oregon
+    branch: backend-fix
+    buildCommand: "npm install"
+    startCommand: "node backend/index.js"
+    rootDirectory: "."
