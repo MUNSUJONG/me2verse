@@ -27,8 +27,12 @@ loginBtn.addEventListener("click", async () => {
     const scopes = ["username", "payments"];
     const user = await Pi.authenticate(scopes);
     currentUser = user;
+
+    // 🔥 여기만 정확하게 수정 (undefined 방지)
+    const username = user?.user?.username || user?.username || "사용자";
+
     console.log("✅ 로그인 성공:", user);
-    statusMsg.textContent = `✅ ${user.username} 님 환영합니다!`;
+    statusMsg.textContent = `✅ ${username} 님 환영합니다!`;
   } catch (error) {
     console.error("❌ 로그인 실패:", error);
     statusMsg.textContent = `❌ 로그인 실패: ${error?.message || JSON.stringify(error)}`;
@@ -37,7 +41,7 @@ loginBtn.addEventListener("click", async () => {
 
 // ✅ 결제 버튼 처리
 payBtn.addEventListener("click", async () => {
-  if (!currentUser || !currentUser.username) {
+  if (!currentUser || !(currentUser?.username || currentUser?.user?.username)) {
     statusMsg.textContent = "❌ 먼저 로그인해주세요.";
     return;
   }
