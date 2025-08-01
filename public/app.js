@@ -5,27 +5,27 @@ const payBtn = document.getElementById("payBtn");
 const statusMsg = document.getElementById("statusMsg");
 
 let currentUser = null;
-const BACKEND_URL = "https://me2verse11.onrender.com";
 
+// ✅ Pi 로그인 처리
 loginBtn.addEventListener("click", async () => {
   if (!window.Pi) {
     statusMsg.textContent = "❌ Pi SDK가 로드되지 않았습니다.";
     return;
   }
 
-  statusMsg.textContent = "🔐 로그인 중...";
-
   try {
-    const scopes = ['username', 'payments'];
-    currentUser = await Pi.authenticate(scopes);
-    console.log("✅ 로그인 성공:", currentUser);
-    statusMsg.textContent = `🔓 로그인됨: ${currentUser.username}`;
+    const scopes = ["username", "payments"];
+    const user = await Pi.authenticate(scopes);
+    currentUser = user;
+    console.log("✅ 로그인 성공:", user);
+    statusMsg.textContent = `✅ ${user.username} 님 환영합니다!`;
   } catch (error) {
     console.error("❌ 로그인 실패:", error);
     statusMsg.textContent = "❌ 로그인 실패!";
   }
 });
 
+// ✅ 결제 버튼 처리
 payBtn.addEventListener("click", async () => {
   if (!currentUser || !currentUser.username) {
     statusMsg.textContent = "❌ 먼저 로그인해주세요.";
@@ -41,9 +41,8 @@ payBtn.addEventListener("click", async () => {
   Pi.createPayment(paymentData, {
     onReadyForServerApproval: async (paymentId) => {
       statusMsg.textContent = "📡 결제 승인 요청 중...";
-
       try {
-        const res = await fetch(`${BACKEND_URL}/approve`, {
+        const res = await fetch("https://me2verse11.onrender.com/approve", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ paymentId })
@@ -58,9 +57,8 @@ payBtn.addEventListener("click", async () => {
 
     onReadyForServerCompletion: async (paymentId, txid) => {
       statusMsg.textContent = "✅ 결제 완료 처리 중...";
-
       try {
-        const res = await fetch(`${BACKEND_URL}/complete`, {
+        const res = await fetch("https://me2verse11.onrender.com/complete", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ paymentId, txid })
