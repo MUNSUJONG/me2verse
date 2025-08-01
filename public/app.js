@@ -1,5 +1,15 @@
 // public/app.js
 
+// ✅ Pi SDK 초기화 (가장 중요!)
+if (window.Pi) {
+  Pi.init({
+    version: "2.0",
+    sandbox: true
+  });
+} else {
+  console.error("❌ Pi SDK가 window에 없습니다.");
+}
+
 const loginBtn = document.getElementById("loginBtn");
 const payBtn = document.getElementById("payBtn");
 const statusMsg = document.getElementById("statusMsg");
