@@ -29,7 +29,11 @@ loginBtn.addEventListener("click", async () => {
     currentUser = user;
 
     // ✅ Pi SDK 구조에 따라 username 추출
-    const username = user?.user?.username || user?.username || "사용자";
+    const username =
+      user?.user?.username ||
+      user?.username ||
+      user?.payload?.user?.username ||
+      "사용자";
 
     console.log("✅ 로그인 성공:", user);
     statusMsg.textContent = `✅ ${username} 님 환영합니다!`;
@@ -41,7 +45,12 @@ loginBtn.addEventListener("click", async () => {
 
 // ✅ 결제 처리
 payBtn.addEventListener("click", async () => {
-  if (!currentUser || !(currentUser?.username || currentUser?.user?.username)) {
+  const username =
+    currentUser?.user?.username ||
+    currentUser?.username ||
+    currentUser?.payload?.user?.username;
+
+  if (!username) {
     statusMsg.textContent = "❌ 먼저 로그인해주세요.";
     return;
   }
@@ -96,5 +105,4 @@ payBtn.addEventListener("click", async () => {
     }
   });
 });
-
 
