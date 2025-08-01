@@ -1,37 +1,67 @@
 const express = require('express');
-const cors = require('cors');
 const app = express();
-const PORT = process.env.PORT || 3000;
+const axios = require('axios');
+const cors = require('cors');
+require('dotenv').config();
 
-app.use(cors());
 app.use(express.json());
+app.use(cors());
 
-app.get('/', (req, res) => {
-  res.send('🟢 Me2Verse 백엔드 루트 정상 작동 중!');
-});
+const PORT = process.env.PORT || 3000;
+const PI_API_KEY = process.env.PI_API_KEY;
+
+const SERVER_HEADER = {
+  Authorization: `Key ${PI_API_KEY}`
+};
 
 app.get('/ping', (req, res) => {
-  res.send('✅ Ping OK: Render 연결 정상');
+  res.send('🟢 Me2Verse Node 서버 작동 중');
 });
 
-app.post('/approve', (req, res) => {
-  const { paymentId } = req.body;
-  if (!paymentId) {
-    return res.status(400).json({ error: "❌ paymentId 누락" });
+app.post('/payment/approve', async (req, res) => {
+  try {
+    const { paymentId } = req.body;
+    const url = `https://api.minepi.com/v2/payments/${paymentId}/approve`;
+    const result = await axios.post(url, {}, { headers: SERVER_HEADER });
+    res.json(result.data);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
-  console.log("📡 결제 승인 요청 수신:", paymentId);
-  res.json({ success: true, paymentId });
 });
 
-app.post('/complete', (req, res) => {
-  const { paymentId, txid } = req.body;
-  if (!paymentId || !txid) {
-    return res.status(400).json({ error: "❌ paymentId 또는 txid 누락" });
+app.post('/payment/complete', async (req, res) => {
+  try {
+    const { paymentId, txid } = req.body;
+    const url = `https://api.minepi.com/v2/payments/${paymentId}/complete`;
+    const result = await axios.post(url, { txid }, { headers: SERVER_HEADER });
+    res.json(result.data);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
-  console.log("🎉 결제 완료 요청 수신:", paymentId, txid);
-  res.json({ success: true, paymentId, txid });
+});
+
+app.post('/payment/cancel', async (req, res) => {
+  try {
+    const { paymentId } = req.body;
+    const url = `https://api.minepi.com/v2/payments/${paymentId}/cancel`;
+    const result = await axios.post(url, {}, { headers: SERVER_HEADER });
+    res.json(result.data);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.post('/payment/error', async (req, res) => {
+  try {
+    const { paymentId } = req.body;
+    const url = `https://api.minepi.com/v2/payments/${paymentId}/cancel`;
+    const result = await axios.post(url, {}, { headers: SERVER_HEADER });
+    res.json(result.data);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 app.listen(PORT, () => {
-  console.log(`✅ 서버 실행 중: http://localhost:${PORT}`);
+  console.log(`서버 실행 중: http://localhost:${PORT}`);
 });
