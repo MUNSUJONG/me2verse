@@ -1,4 +1,32 @@
-payBtn.addEventListener('click', async () => {
+// public/app.js
+
+const loginBtn = document.getElementById("loginBtn");
+const payBtn = document.getElementById("payBtn");
+const statusMsg = document.getElementById("statusMsg");
+
+let currentUser = null;
+const BACKEND_URL = "https://me2verse11.onrender.com";
+
+loginBtn.addEventListener("click", async () => {
+  if (!window.Pi) {
+    statusMsg.textContent = "❌ Pi SDK가 로드되지 않았습니다.";
+    return;
+  }
+
+  statusMsg.textContent = "🔐 로그인 중...";
+
+  try {
+    const scopes = ['username', 'payments'];
+    currentUser = await Pi.authenticate(scopes);
+    console.log("✅ 로그인 성공:", currentUser);
+    statusMsg.textContent = `🔓 로그인됨: ${currentUser.username}`;
+  } catch (error) {
+    console.error("❌ 로그인 실패:", error);
+    statusMsg.textContent = "❌ 로그인 실패!";
+  }
+});
+
+payBtn.addEventListener("click", async () => {
   if (!currentUser || !currentUser.username) {
     statusMsg.textContent = "❌ 먼저 로그인해주세요.";
     return;
@@ -15,12 +43,11 @@ payBtn.addEventListener('click', async () => {
       statusMsg.textContent = "📡 결제 승인 요청 중...";
 
       try {
-        const res = await fetch("https://me2verse11.onrender.com/approve", {
+        const res = await fetch(`${BACKEND_URL}/approve`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ paymentId })
         });
-
         const result = await res.json();
         console.log("✅ 승인 응답:", result);
       } catch (error) {
@@ -33,12 +60,11 @@ payBtn.addEventListener('click', async () => {
       statusMsg.textContent = "✅ 결제 완료 처리 중...";
 
       try {
-        const res = await fetch("https://me2verse11.onrender.com/complete", {
+        const res = await fetch(`${BACKEND_URL}/complete`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ paymentId, txid })
         });
-
         const result = await res.json();
         console.log("🎉 완료 응답:", result);
         statusMsg.textContent = "🎉 결제 완료!";
