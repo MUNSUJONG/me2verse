@@ -21,7 +21,7 @@ loginBtn.addEventListener("click", async () => {
     statusMsg.textContent = `✅ ${user.username} 님 환영합니다!`;
   } catch (error) {
     console.error("❌ 로그인 실패:", error);
-    statusMsg.textContent = "❌ 로그인 실패!";
+    statusMsg.textContent = `❌ 로그인 실패: ${error?.message || JSON.stringify(error)}`;
   }
 });
 
