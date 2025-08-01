@@ -1,74 +1,60 @@
-// public/app.js
-
-const loginBtn = document.getElementById('loginBtn');
-const payBtn = document.getElementById('payBtn');
-const statusMsg = document.getElementById('statusMsg');
-
-const BACKEND_URL = "https://me2verse11.onrender.com";
-
-let currentUser = null;
-
-// 로그인
-loginBtn.addEventListener('click', async () => {
-  try {
-    if (!window.Pi) {
-      statusMsg.textContent = '❌ Pi SDK가 로드되지 않았습니다.';
-      return;
-    }
-
-    const scopes = ['username', 'payments'];
-    Pi.authenticate(scopes, onLoginSuccess, onLoginFailure);
-  } catch (error) {
-    statusMsg.textContent = `로그인 오류: ${error.message}`;
-  }
-});
-
-function onLoginSuccess(user) {
-  currentUser = user;
-  statusMsg.textContent = `✅ 로그인 성공: ${user.username}`;
-}
-
-function onLoginFailure(error) {
-  statusMsg.textContent = `❌ 로그인 실패: ${error}`;
-}
-
-// 결제
 payBtn.addEventListener('click', async () => {
-  if (!currentUser) {
+  if (!currentUser || !currentUser.username) {
     statusMsg.textContent = "❌ 먼저 로그인해주세요.";
     return;
   }
 
   const paymentData = {
     amount: 1,
-    memo: "Me2Verse Pi 결제 테스트",
-    metadata: { type: "test" }
+    memo: "Me2Verse 결제 테스트",
+    metadata: { purpose: "test" }
   };
 
   Pi.createPayment(paymentData, {
     onReadyForServerApproval: async (paymentId) => {
-      statusMsg.textContent = `⏳ 결제 승인 요청 중...`;
+      statusMsg.textContent = "📡 결제 승인 요청 중...";
 
-      await fetch(`${BACKEND_URL}/approve`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ paymentId })
-      });
+      try {
+        const res = await fetch("https://me2verse11.onrender.com/approve", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ paymentId })
+        });
+
+        const result = await res.json();
+        console.log("✅ 승인 응답:", result);
+      } catch (error) {
+        console.error("❌ 승인 오류:", error);
+        statusMsg.textContent = "❌ 서버 승인 중 오류 발생!";
+      }
     },
+
     onReadyForServerCompletion: async (paymentId, txid) => {
-      statusMsg.textContent = `📦 결제 승인됨! 완료 처리 중...`;
+      statusMsg.textContent = "✅ 결제 완료 처리 중...";
 
-      await fetch(`${BACKEND_URL}/complete`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ paymentId, txid })
-      });
+      try {
+        const res = await fetch("https://me2verse11.onrender.com/complete", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ paymentId, txid })
+        });
+
+        const result = await res.json();
+        console.log("🎉 완료 응답:", result);
+        statusMsg.textContent = "🎉 결제 완료!";
+      } catch (error) {
+        console.error("❌ 완료 오류:", error);
+        statusMsg.textContent = "❌ 결제 완료 처리 중 오류 발생!";
+      }
     },
+
     onCancel: (paymentId) => {
-      statusMsg.textContent = `❌ 사용자가 결제를 취소했습니다.`;
+      statusMsg.textContent = "🚫 결제가 취소되었습니다.";
     },
+
     onError: (error, payment) => {
-      statusMsg.textContent = `🚫 결제 오류 발생: ${error}`;
+      console.error("❌ 결제 오류:", error);
+      statusMsg.textContent = "❌ 결제 중 오류 발생!";
     }
   });
 });
