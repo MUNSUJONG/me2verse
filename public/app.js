@@ -1,10 +1,4 @@
-const loginBtn = document.getElementById('loginBtn');
-const payBtn = document.getElementById('payBtn');
-const statusMsg = document.getElementById('statusMsg');
 
-let currentUser = null;
-
-// Pi SDK 초기화
 function initPi() {
   if (!window.Pi) {
     statusMsg.textContent = '❌ Pi SDK 로드 실패 (Pi Browser에서 실행하세요)';
