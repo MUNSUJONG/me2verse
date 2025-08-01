@@ -1,0 +1,6 @@
+{
+  "app_id": "me2verse-demo",
+  "sandbox": true,
+  "display_name": "Me2Verse Pi Network Demo",
+  "access_control": ["https://me2verse11.netlify.app"]
+}
